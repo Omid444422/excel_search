@@ -25,31 +25,50 @@ for file_index,file in enumerate(files):
 
     for sheet in excel:
         active_excel = excel[sheet.title]
+        null_counter = 0
 
         for row_index,row in enumerate(active_excel.iter_rows(values_only=True)):
             
             current_target = str(row[int(user_input[file_index])]).replace(' ','').replace('-','').replace('_','').replace(':','').replace('/','').strip()
 
-            if current_target == None or current_target == '':
+            if null_counter >= 200:
+                break
+
+            if row[int(user_input[file_index])] == None:
+                null_counter += 1
+
+            if row[int(user_input[file_index])] == None or row[int(user_input[file_index])] == '':
                 continue
+
+            null_counter = 0
 
             print(str(row_index) + ': ' + current_target)
             
             for search_sheet in excel:
                 
                 search_active_excel = excel[search_sheet.title]
+                search_null_counter = 0
 
                 for search_row_index,search_row in enumerate(search_active_excel.iter_rows(values_only=True)):
 
                     search_value = str(search_row[int(user_input[file_index])]).replace(' ','').replace('-','').replace('_','').replace(':','').replace('/','').strip()
 
-                    if search_value == None or search_value == '':
+                    if search_null_counter >= 200:
+                        break
+
+                    if search_row[int(user_input[file_index])] == None:
+                        search_null_counter += 1
+
+                    if search_row[int(user_input[file_index])] == None or search_row[int(user_input[file_index])] == '':
                         continue
+
+                    search_null_counter = 0
 
                     if current_target == search_value or search_value.find(current_target) > -1:
                         
                         output_file = open(OUTPUT_PATH + file_name + '.txt','a',encoding='utf-8')
-                        output_file.write(f"search word: {current_target} | sheet: {search_sheet.title} | row: {search_row_index} | finded_Value: {search_value} \n\n")
+                        output_file.write(f"search word: {current_target} | sheet: {search_sheet.title} | row: {search_row_index + 1} | finded_Value: {search_value} \n\n")
 
                         output_file.close()
-print(time() - time)
+
+print(time() - start_time)
